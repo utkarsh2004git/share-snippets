@@ -1,5 +1,4 @@
-
-import EditSippteForm from '@/components/EditSippetForm';
+import { deleteSnippet } from '@/actions';
 import { Button } from '@/components/ui/button';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
@@ -8,7 +7,10 @@ import React from 'react'
 
 const SnippetDetailPage = async ({ params }: { params: Promise<{ id: string }> }) => {
 
+
     const id = parseInt((await params).id);
+
+    
     const snippet = await prisma.snippet.findUnique({
         where: {
             id: id
@@ -16,6 +18,8 @@ const SnippetDetailPage = async ({ params }: { params: Promise<{ id: string }> }
     });
 
     if (!snippet) return notFound();
+    const deleteSnippetAction =deleteSnippet.bind(null,snippet.id)
+    
 
     return (
         <div className='flex justify-center w-full'>
@@ -24,7 +28,9 @@ const SnippetDetailPage = async ({ params }: { params: Promise<{ id: string }> }
                     <h1 className='text-xl font-bold '>{snippet?.title}</h1>
                     <div className='flex items-center justify-center gap-6 my-3'>
                         <Link href={`/snippet/${snippet.id}/edit`}><Button variant={"outline"}>Edit</Button></Link>
-                        <Button variant={"destructive"}>Delete</Button>
+                        <form action={deleteSnippetAction}>
+                            <Button type='submit' variant={"destructive"}>Delete</Button>
+                        </form>
                     </div>
 
                 </div>
