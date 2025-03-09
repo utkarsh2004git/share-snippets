@@ -1,8 +1,8 @@
 "use server"
 
 import { prisma } from "@/lib/prisma"
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation"
-
 
 
 export async function createSnippet(prevState: { message: string }, formData: FormData) {
@@ -33,6 +33,7 @@ export async function createSnippet(prevState: { message: string }, formData: Fo
         }
     }
 
+    revalidatePath("/")
     redirect("/");
 }
 
@@ -45,6 +46,7 @@ export const saveSnippet = async (id: number, code: string) => {
             code
         }
     })
+    revalidatePath(`/snippet/${id}`)
     redirect(`/snippet/${id}`)
 }
 
@@ -55,5 +57,6 @@ export const deleteSnippet = async (id: number) => {
             id: id
         }
     })
+    revalidatePath("/")
     redirect(`/`)
 }
