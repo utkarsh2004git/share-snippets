@@ -1,4 +1,6 @@
+
 import { deleteSnippet } from '@/actions';
+import CopyToClipboard from '@/components/CopyToClipboard';
 import { Button } from '@/components/ui/button';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
@@ -10,7 +12,11 @@ const SnippetDetailPage = async ({ params }: { params: Promise<{ id: string }> }
 
     const id = parseInt((await params).id);
 
-    
+    const copyTextToClipboard = (text:string)=>{
+        navigator.clipboard.writeText(text);
+    }
+
+
     const snippet = await prisma.snippet.findUnique({
         where: {
             id: id
@@ -18,8 +24,8 @@ const SnippetDetailPage = async ({ params }: { params: Promise<{ id: string }> }
     });
 
     if (!snippet) return notFound();
-    const deleteSnippetAction =deleteSnippet.bind(null,snippet.id)
-    
+    const deleteSnippetAction = deleteSnippet.bind(null, snippet.id)
+
 
     return (
         <div className='flex justify-center w-full'>
@@ -35,9 +41,15 @@ const SnippetDetailPage = async ({ params }: { params: Promise<{ id: string }> }
 
                 </div>
                 <div>
-                    <pre className='border rounded-md p-3 text-white flex justify-center'>
-                        <code className='bg-gray-950 p-2 rounded-md w-md'>
-                            {snippet.code}
+                    <pre className='border rounded-md p-3  text-white flex justify-center'>
+                        
+                        <code className='bg-gray-900 p-4 rounded-md w-lg'>
+                            <div className='h-10 flex justify-end'>
+                                <CopyToClipboard text={snippet.code}/>
+                            </div>
+                            <div>
+                                {snippet.code}
+                            </div>
                         </code>
                     </pre>
                 </div>
